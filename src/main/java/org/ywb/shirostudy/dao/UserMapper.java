@@ -9,4 +9,10 @@ package org.ywb.shirostudy.dao;
  */
 
 public interface UserMapper {
+    /**
+     * 通过用户名获取用户密码
+     * @param userName
+     * @return
+     */
+    String findPasswordByUserName(String userName);
 }
