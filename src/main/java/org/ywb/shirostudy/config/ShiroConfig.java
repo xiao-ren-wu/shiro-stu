@@ -1,18 +1,17 @@
-package org.ywb.shirostudy;
+package org.ywb.shirostudy.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.realm.Realm;
 import org.apache.shiro.spring.LifecycleBeanPostProcessor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.filter.DelegatingFilterProxy;
+import org.ywb.shirostudy.filter.RolesOrFilter;
 import org.ywb.shirostudy.realm.CustomRealm;
 
-import java.util.ArrayList;
+import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -22,11 +21,34 @@ import java.util.Map;
  * github https://github.com/xiao-ren-wu
  * @version 1
  * @since 2019/3/8 0:09
+ *
+ *
+ *
+ *
+ * Shiro内置的过滤器：
+ * 认证：
+ * anno------>不需要任何的认证
+ * authBasic-->HttpBasic
+ * authc------>需要认证之后才可以访问
+ * user------->需要当前存在用户才可以访问
+ * logout----->退出
+ *
+ * 授权：
+ * perms---------->具有相应的权限才可以访问
+ * roles---------->需要时xxx角色才可以访问
+ * ssl------------>要求是安全的协议(https)才可以
+ * port----------->要求制定的端口才可以访问
+ *
  */
 
 
 @Configuration
 public class ShiroConfig {
+
+    @Resource
+    private RolesOrFilter rolesOrFilter;
+
+
     @Bean
     public ShiroFilterFactoryBean shiroFilter(WebSecurityManager securityManager){
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
@@ -45,10 +67,13 @@ public class ShiroConfig {
 
         //未授权跳转
         //shiroFilterFactoryBean.setUnauthorizedUrl("/page/fail.html");
-        //登录成功跳转的链接 (这个不知道怎么用，我都是自己实现跳转的)
         //shiroFilterFactoryBean.setSuccessUrl("/page/main.html");
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
+
+        HashMap filterMap = new HashMap(16);
+        filterMap.put("rolesOrFilter",rolesOrFilter);
+        shiroFilterFactoryBean.setFilters(filterMap);
         return shiroFilterFactoryBean;
     }
 
