@@ -2,7 +2,6 @@ package org.ywb.shirostudy.filter;
 
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authz.AuthorizationFilter;
-import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;

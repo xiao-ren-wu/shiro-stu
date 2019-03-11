@@ -4,7 +4,6 @@ import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.authc.SimpleAuthenticationInfo;
-import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
@@ -32,17 +31,7 @@ public class CustomRealm extends AuthorizingRealm {
     @Resource
     private RoleMapper roleMapper;
 
-    {
-        //加密
-        HashedCredentialsMatcher matcher = new HashedCredentialsMatcher();
-        //选取hash散列算法
-        matcher.setHashAlgorithmName("md5");
-        //设置算法执行次数
-        matcher.setHashIterations(1);
 
-        //将设置好的加密规则交给customRealm
-        this.setCredentialsMatcher(matcher);
-    }
 
     /**
      * 用于授权使用
