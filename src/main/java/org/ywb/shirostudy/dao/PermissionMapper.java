@@ -1,5 +1,7 @@
 package org.ywb.shirostudy.dao;
 
+import java.util.Set;
+
 /**
  * @author XiaoRenwu
  * e-mail 18629015421@163.com
@@ -9,4 +11,10 @@ package org.ywb.shirostudy.dao;
  */
 
 public interface PermissionMapper {
+    /**
+     * 通过角色名称找到该角色具备的权限
+     * @param roleName 角色名称
+     * @return 该角色具备的权限
+     */
+    Set<String> findPermissionByRoleName(String roleName);
 }

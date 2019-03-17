@@ -1,6 +1,6 @@
 /*
 SQLyog Ultimate v12.08 (64 bit)
-MySQL - 5.7.24 : Database - spring_shiro
+MySQL - 5.7.25 : Database - shiro_spring
 *********************************************************************
 */
 
@@ -12,54 +12,56 @@ MySQL - 5.7.24 : Database - spring_shiro
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
-CREATE DATABASE /*!32312 IF NOT EXISTS*/`spring_shiro` /*!40100 DEFAULT CHARACTER SET utf8 */;
+CREATE DATABASE /*!32312 IF NOT EXISTS*/`shiro_spring` /*!40100 DEFAULT CHARACTER SET latin1 */;
 
-USE `spring_shiro`;
+USE `shiro_spring`;
 
-/*Table structure for table `permission` */
+/*Table structure for table `roles_permissin` */
 
-DROP TABLE IF EXISTS `permission`;
+DROP TABLE IF EXISTS `roles_permissin`;
 
-CREATE TABLE `permission` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `permission` varchar(32) NOT NULL COMMENT '权限',
-  `role_id` bigint(20) NOT NULL COMMENT '角色id',
+CREATE TABLE `roles_permissin` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `role_name` varchar(32) NOT NULL COMMENT '角色名',
+  `permission` varchar(32) NOT NULL COMMENT '权限名',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Data for the table `permission` */
+/*Data for the table `roles_permissin` */
 
-insert  into `permission`(`id`,`permission`,`role_id`) values (1,'create',1),(2,'update',1);
+/*Table structure for table `user_roles` */
 
-/*Table structure for table `role` */
+DROP TABLE IF EXISTS `user_roles`;
 
-DROP TABLE IF EXISTS `role`;
-
-CREATE TABLE `role` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+CREATE TABLE `user_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `role_name` varchar(32) NOT NULL COMMENT '角色名称',
-  `user_id` bigint(20) NOT NULL COMMENT '用户id',
+  `username` varchar(32) NOT NULL COMMENT '用户名称',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '更改时间',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Data for the table `role` */
+/*Data for the table `user_roles` */
 
-insert  into `role`(`id`,`role_name`,`user_id`) values (1,'admin',3);
+/*Table structure for table `users` */
 
-/*Table structure for table `user` */
+DROP TABLE IF EXISTS `users`;
 
-DROP TABLE IF EXISTS `user`;
-
-CREATE TABLE `user` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` varchar(32) NOT NULL COMMENT '用户名',
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(32) NOT NULL COMMENT '用户名',
   `password` varchar(32) NOT NULL COMMENT '密码',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8;
+  `salt` varchar(32) NOT NULL COMMENT '盐',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `username` (`username`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-/*Data for the table `user` */
-
-insert  into `user`(`id`,`name`,`password`) values (3,'test','123456');
+/*Data for the table `users` */
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;

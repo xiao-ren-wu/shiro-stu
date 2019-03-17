@@ -28,16 +28,12 @@ public class UserController {
     @RequestMapping(value = "/login")
     public String login(User user){
         Subject subject = SecurityUtils.getSubject();
-        UsernamePasswordToken token = new UsernamePasswordToken(user.getUser(), user.getPassword());
+        UsernamePasswordToken token = new UsernamePasswordToken(user.getUserName(), user.getPassword());
         try {
             subject.login(token);
         } catch (AuthenticationException e) {
             return e.getMessage();
         }
-        //权限检查
-//        if(subject.hasRole("admin")){
-//            return "有admin权限";
-//        }
         return "登陆成功";
     }
 

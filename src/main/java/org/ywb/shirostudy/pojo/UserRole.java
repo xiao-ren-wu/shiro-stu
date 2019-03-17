@@ -10,24 +10,25 @@ import java.util.Date;
  * e-mail 18629015421@163.com
  * github https://github.com/xiao-ren-wu
  * @version 1
- * @since 2019/3/6 23:51
+ * @since 2019/3/6 23:50
  */
 
 @Getter
 @Setter
-public class Permission {
-    private Integer id;
+public class UserRole {
+    private Long id;
     private String roleName;
-    private String permission;
+    private Long userName;
+
     private Date createTime;
     private Date updateTime;
 
     @Override
     public String toString() {
-        return "Permission{" +
+        return "UserRole{" +
                 "id=" + id +
                 ", roleName='" + roleName + '\'' +
-                ", permission='" + permission + '\'' +
+                ", userName=" + userName +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
                 '}';

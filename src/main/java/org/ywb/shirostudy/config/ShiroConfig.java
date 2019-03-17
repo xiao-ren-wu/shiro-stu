@@ -1,13 +1,18 @@
 package org.ywb.shirostudy.config;
 
 import org.apache.shiro.authc.credential.HashedCredentialsMatcher;
-import org.apache.shiro.spring.LifecycleBeanPostProcessor;
+import org.apache.shiro.realm.text.IniRealm;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.mgt.WebSecurityManager;
+import org.apache.shiro.web.servlet.SimpleCookie;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.ywb.shirostudy.cache.RedisCacheManager;
+import org.ywb.shirostudy.filter.PermFilter;
 import org.ywb.shirostudy.filter.RolesOrFilter;
 import org.ywb.shirostudy.realm.CustomRealm;
 import org.ywb.shirostudy.session.CustomSessionManager;
@@ -43,15 +48,8 @@ import java.util.Map;
  * port----------->要求制定的端口才可以访问
  */
 
-
 @Configuration
 public class ShiroConfig {
-
-    @Resource
-    private RolesOrFilter rolesOrFilter;
-
-    @Resource
-    private CustomSessionManager sessionManager;
 
     @Resource
     private RedisSessionDao sessionDao;
@@ -59,31 +57,42 @@ public class ShiroConfig {
     @Resource
     private RedisCacheManager redisCacheManager;
 
+    @Resource
+    private CustomRealm customRealm;
+
+    @Resource
+    private IniRealm iniRealm;
+
+    @Resource
+    private RolesOrFilter rolesOrFilter;
+
+    @Resource
+    private PermFilter permFilter;
+
     @Bean
     public ShiroFilterFactoryBean shiroFilter(WebSecurityManager securityManager) {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-        //拦截器.
+        //拦截器
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-        //配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
-        filterChainDefinitionMap.put("logout", "logout");
+        // authc:所有url都必须认证(登录)通过才可以访问; anon:所有url都可以匿名访问
         filterChainDefinitionMap.put("/user/login", "anon");
-        // authc:所有url都必须认证通过才可以访问; anon:所有url都可以匿名访问
-        filterChainDefinitionMap.put("/user/**", "anon");
-        filterChainDefinitionMap.put("/test/**", "authc");
-
-        // 如果不设置默认会自动寻找Web工程根目录下的"/login.jsp"页面
-        //shiroFilterFactoryBean.setLoginUrl("/login.html");
-
-        //未授权跳转
-        //shiroFilterFactoryBean.setUnauthorizedUrl("/page/fail.html");
-        //shiroFilterFactoryBean.setSuccessUrl("/page/main.html");
-
+        filterChainDefinitionMap.put("/**", "authc");
+        shiroFilterFactoryBean.setLoginUrl("/user/need-login");
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
 
-        HashMap filterMap = new HashMap(16);
-        filterMap.put("rolesOrFilter", rolesOrFilter);
-        shiroFilterFactoryBean.setFilters(filterMap);
+        //添加自己的过滤器
+        HashMap<Object, Object> customFilterMap = new LinkedHashMap<>(16);
+        customFilterMap.put("rolesOrFilter", rolesOrFilter);
+        customFilterMap.put("permFilter", permFilter);
+
+        /*
+         * 设置自定义拦截器拦截路径
+         * 如果多个拦截器拦截的路径相同，记得让拦截器的路径有点小差别
+         * 因为map这个数据结构一个key只能对应一个value
+         */
+        /// filterChainDefinitionMap.put("/**/**","rolesOrFilter");
+        /// filterChainDefinitionMap.put("/**/test","permFilter");
         return shiroFilterFactoryBean;
     }
 
@@ -103,7 +112,12 @@ public class ShiroConfig {
         return hashedCredentialsMatcher;
     }
 
-
+    /**
+     * 自定义Realm
+     *
+     * @param hashedCredentialsMatcher md5
+     * @return customRealm
+     */
     @Bean
     public CustomRealm customRealm(HashedCredentialsMatcher hashedCredentialsMatcher) {
         CustomRealm customRealm = new CustomRealm();
@@ -113,9 +127,12 @@ public class ShiroConfig {
     }
 
     @Bean
-    public WebSecurityManager securityManager(CustomRealm customrealm) {
+    public WebSecurityManager securityManager(CustomSessionManager sessionManager) {
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setRealm(customrealm);
+        sessionManager.setSessionDAO(sessionDao);
+        sessionManager.setSessionIdCookie(getSimpleCookie());
+///        securityManager.setRealm(iniRealm);
+        securityManager.setRealm(customRealm);
         securityManager.setSessionManager(sessionManager);
         securityManager.setCacheManager(redisCacheManager);
         return securityManager;
@@ -123,14 +140,39 @@ public class ShiroConfig {
 
 
     @Bean
-    public LifecycleBeanPostProcessor lifecycleBeanPostProcessor() {
-        return new LifecycleBeanPostProcessor();
+    public IniRealm getIniRealm() {
+        return new IniRealm("classpath:user.ini");
+    }
+
+    /**
+     * 重新设置cookieId避免和系统自带的冲突
+     *
+     * @return cookie
+     */
+    private SimpleCookie getSimpleCookie() {
+        SimpleCookie simpleCookie = new SimpleCookie("shiro-sessionId");
+        simpleCookie.setPath("/");
+        return simpleCookie;
+    }
+
+    /**
+     * 开启shiro注解生效
+     */
+    @Bean
+    public AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor(WebSecurityManager securityManager) {
+        AuthorizationAttributeSourceAdvisor authorizationAttributeSourceAdvisor = new AuthorizationAttributeSourceAdvisor();
+        authorizationAttributeSourceAdvisor.setSecurityManager(securityManager);
+        return authorizationAttributeSourceAdvisor;
+
     }
 
     @Bean
-    public CustomSessionManager getSessionManager() {
-        CustomSessionManager sessionManager = new CustomSessionManager();
-        sessionManager.setSessionDAO(sessionDao);
-        return sessionManager;
+    @ConditionalOnMissingBean
+    public DefaultAdvisorAutoProxyCreator defaultAdvisorAutoProxyCreator() {
+        DefaultAdvisorAutoProxyCreator app = new DefaultAdvisorAutoProxyCreator();
+        app.setProxyTargetClass(true);
+        return app;
+
     }
+
 }

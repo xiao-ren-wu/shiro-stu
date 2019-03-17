@@ -5,7 +5,6 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.UsernamePasswordToken;
 import org.apache.shiro.mgt.DefaultSecurityManager;
 import org.apache.shiro.realm.jdbc.JdbcRealm;
-import org.apache.shiro.realm.text.IniRealm;
 import org.apache.shiro.subject.Subject;
 import org.junit.Test;
 
@@ -20,7 +19,7 @@ import org.junit.Test;
 
 public class JdbcRealmTest {
 
-    DruidDataSource dataSource = new DruidDataSource();
+    private DruidDataSource dataSource = new DruidDataSource();
 
     {
         dataSource.setUrl("jdbc:mysql://127.0.0.1:3306/spring_shiro?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT");

@@ -20,13 +20,9 @@ import javax.annotation.Resource;
 @Configuration
 public class Config {
 
-
     @Bean
     public JedisPool getJedisPool(@Value("host")String host,
                                   @Value("port")Integer port){
         return new JedisPool(host,port);
     }
-
-
-
 }

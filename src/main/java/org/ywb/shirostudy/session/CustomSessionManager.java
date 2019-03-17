@@ -5,6 +5,7 @@ import org.apache.shiro.session.UnknownSessionException;
 import org.apache.shiro.session.mgt.SessionKey;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.apache.shiro.web.session.mgt.WebSessionKey;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.ServletRequest;
 import java.io.Serializable;
@@ -17,7 +18,7 @@ import java.io.Serializable;
  * @since 2019/3/12 0:45
  */
 
-
+@Component
 public class CustomSessionManager extends DefaultWebSessionManager {
     @Override
     protected Session retrieveSession(SessionKey sessionKey) throws UnknownSessionException {

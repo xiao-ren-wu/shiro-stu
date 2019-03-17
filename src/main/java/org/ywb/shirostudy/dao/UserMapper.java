@@ -1,5 +1,7 @@
 package org.ywb.shirostudy.dao;
 
+import org.ywb.shirostudy.pojo.User;
+
 /**
  * @author XiaoRenwu
  * e-mail 18629015421@163.com
@@ -11,8 +13,8 @@ package org.ywb.shirostudy.dao;
 public interface UserMapper {
     /**
      * 通过用户名获取用户密码
-     * @param userName
-     * @return
+     * @param userName 用户姓名
+     * @return 用户信息
      */
-    String findPasswordByUserName(String userName);
+    User findPasswordByUserName(String userName);
 }

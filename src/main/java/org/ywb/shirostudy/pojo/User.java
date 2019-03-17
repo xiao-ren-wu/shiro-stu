@@ -1,5 +1,10 @@
 package org.ywb.shirostudy.pojo;
 
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.Date;
+
 /**
  * @author XiaoRenwu
  * e-mail 18629015421@163.com
@@ -8,33 +13,23 @@ package org.ywb.shirostudy.pojo;
  * @since 2019/3/6 23:49
  */
 
-
+@Getter
+@Setter
 public class User {
     private Long id;
-    private String user;
+    private String userName;
     private String password;
+    private String salt;
+    private Date updateTime;
+    private Date createTime;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(String user) {
-        this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", userName='" + userName + '\'' +
+                ", updateTime=" + updateTime +
+                ", createTime=" + createTime +
+                '}';
     }
 }
