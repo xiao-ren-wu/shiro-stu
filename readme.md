@@ -8,8 +8,7 @@
 
 ## :fire: 用户认证流程&授权流程
 
-![](https://github.com/xiao-ren-wu/shiro-stu/blob/master/src/main/resources/img/%E7%94%A8%E6%88%B7%E8%AE%A4%E8%AF%81%E6%B5%81%E7%A8%8B.png)
-![](https://github.com/xiao-ren-wu/shiro-stu/blob/master/src/main/resources/img/%E6%8E%88%E6%9D%83.png)
+![](https://github.com/xiao-ren-wu/shiro-stu/blob/master/src/main/resources/img/%E8%AE%A4%E8%AF%81%E6%8E%88%E6%9D%83.png)
 
 1.	创建Security Manager.
 2.	主体提交请求到Security Manager。
@@ -116,9 +115,9 @@ public class JdbcRealm extends AuthorizingRealm {
 
 - 通过查看JdbcRealm源码可以看出,shiro设计的数据库结构如下：
 
-![](C:\Users\yuwenbo9\Desktop\数据库uml.png)
+![](https://github.com/xiao-ren-wu/shiro-stu/blob/master/src/main/resources/img/%E6%95%B0%E6%8D%AE%E5%BA%93uml.png)
 
-#### :truck:[sql文件]()
+#### :truck:[sql文件](https://github.com/xiao-ren-wu/shiro-stu/blob/master/src/main/resources/sql/shiro.sql)
 
 ~~~
     //配置数据源
@@ -610,13 +609,6 @@ public class CustomRealm extends AuthorizingRealm {
 }
 ~~~
 
-:notebook:下面的类实现比较简单，不做展示，查看源码请点击下面的链接:
-
-[Usermapper]()
-
-[UserRolesMapper]()
-
-[PermissionMapper]()
 
 - 创建一个Config类用来生成shiro相关的对象，交给spring管理。
 ~~~
