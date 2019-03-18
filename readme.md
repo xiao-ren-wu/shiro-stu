@@ -84,7 +84,7 @@ ini配置文件内容
 > [roles]  
 > admin=user:delete,user:update  
 
-**【解释】**
+**【解释】**      
 [users]
 test=test,admin----------->等号左面的为用户名，右面的第一个字段为用户密码，逗号后面的为用户拥有的角色,如果用户具备多个角色，每个角色之间用户逗号隔开。  
 [roles]  
